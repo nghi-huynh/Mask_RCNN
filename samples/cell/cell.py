@@ -58,6 +58,7 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 RESULTS_DIR = os.path.join(ROOT_DIR, "results/cells/")
 
+DATASET_DIR = "/content/cell/train.csv"
 # Directory of train.csv file
 #TRAIN = os.path.join(ROOT_DIR, 'train.csv')
 #train = pd.read_csv(TRAIN)
@@ -247,7 +248,7 @@ class CellDataset(utils.Dataset):
             )
 
   
-    def load_mask(self, image_id, dataset_dir):
+    def load_mask(self, image_id):
         '''Generate instance mask for an image.
         Returns:
         masks: A bool array of shape [height, width, instance count] with
@@ -259,7 +260,7 @@ class CellDataset(utils.Dataset):
         image_id = info['id']
 
         # Get masks by image_id
-        masks = rle_decode(image_id, dataset_dir)
+        masks = rle_decode(image_id, DATASET_DIR)
         masks = padding_image(masks, 0)
 
         # Get label
