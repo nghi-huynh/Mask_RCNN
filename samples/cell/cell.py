@@ -59,8 +59,8 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 RESULTS_DIR = os.path.join(ROOT_DIR, "results/cells/")
 
 # Directory of train.csv file
-TRAIN = os.path.join(ROOT_DIR, 'train.csv')
-train = pd.read_csv(TRAIN)
+#TRAIN = os.path.join(ROOT_DIR, 'train.csv')
+#train = pd.read_csv(TRAIN)
 
 # Original Image Dimension
 HEIGHT = 520
@@ -73,7 +73,8 @@ WIDTH_TARGET = 704
 SHAPE_TARGET = (HEIGHT_TARGET, WIDTH_TARGET)
 
 BATCH_SIZE = 1
-N_SAMPLES = train['id'].unique()
+#N_SAMPLES = train['id'].unique()
+N_SAMPLES = 400
 
 # Debug mode for fast experimenting with 50 samples
 DEBUG = False
@@ -88,24 +89,42 @@ EPOCHS_ALL = 10 if DEBUG else 20
 Encode categorical features as a on-hot numeric array.
 The encoder derives the categories based on the unique values in each feature
 '''
+def cell_types(train_dir):
+    train = pd.read_csv(train_dir)
+    train['file_path'] = train['id'].apply(get_file_path)
+    cell_names = np.sort(train['cell_type'].unique())
+    cell_name_dict = dict([(v,k) for k, v in enumerate(cell_names)])
+    
+    # Add cell type label to train " + 1" because label 0 is reserved for background
+    train['cell_type_label'] = train['cell_type'].apply(cell_name_dict.get) + 1
+
+    # Image ID to Cell Type Label Dictionary
+    id2cell_label = dict(
+        [(k, v) for k, v in train[['id', 'cell_type_label']].itertuples(name=None, index=False)]
+    )
+
+    return cell_names, id2cell_label
+
+
 def get_file_path(image_id):
     return f'/kaggle/input/sartorius-cell-instance-segmentation/train/{image_id}.png'
 
-train['file_path'] = train['id'].apply(get_file_path)
+
+#train['file_path'] = train['id'].apply(get_file_path)
 
 # Unique cell names
-CELL_NAMES = np.sort(train['cell_type'].unique())
+#CELL_NAMES = np.sort(train['cell_type'].unique())
 
 # Cell type to label dictionary
-CELL_NAMES_DICT = dict([(v,k) for k, v in enumerate(CELL_NAMES)])
+#CELL_NAMES_DICT = dict([(v,k) for k, v in enumerate(CELL_NAMES)])
 
 # Add cell type label to train " + 1" because label 0 is reserved for background
-train['cell_type_label'] = train['cell_type'].apply(CELL_NAMES_DICT.get) + 1
+#train['cell_type_label'] = train['cell_type'].apply(CELL_NAMES_DICT.get) + 1
 
 # Image ID to Cell Type Label Dictionary
-ID2CELL_LABEL = dict(
-    [(k, v) for k, v in train[['id', 'cell_type_label']].itertuples(name=None, index=False)]
-)
+#ID2CELL_LABEL = dict(
+#    [(k, v) for k, v in train[['id', 'cell_type_label']].itertuples(name=None, index=False)]
+#)
 
 ##############################################################
 # Configurations
@@ -120,7 +139,11 @@ class CellConfig(Config):
     IMAGES_PER_GPU = 6
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + len(CELL_NAMES)  # Background + number of cell types
+
+    # number of cell types = 3
+
+    #NUM_CLASSES = 1 + len(CELL_NAMES)  # Background + number of cell types
+    NUM_CLASSES = 1 + 3
 
     # Number of training and validation steps per epoch
     # STEPS_PER_EPOCH = (657 - len(VAL_IMAGE_IDS)) // IMAGES_PER_GPU
@@ -205,8 +228,12 @@ class CellDataset(utils.Dataset):
 
         image_paths = next(os.walk(dataset_dir))[2] # Get all filenames from the train directory
 
+        train_dir = os.join(dataset_dir, 'train.csv')
+
+        cell_names, id2cell_label = cell_types(train_dir)
+
         # Add classes. We have multiple classes
-        for i, name in CELL_NAMES:
+        for i, name in cell_names:
             self.add_class("cell", 1 + i, name)
 
         for image in image_paths:
@@ -216,7 +243,7 @@ class CellDataset(utils.Dataset):
             path = os.path.join(dataset_dir,image),
             width = WIDTH,
             height = HEIGHT,
-            label = ID2CELL_LABEL[image.split(".")[0]]
+            label = id2cell_label[image.split(".")[0]]
             )
 
   
