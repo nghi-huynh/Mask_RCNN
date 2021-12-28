@@ -224,11 +224,11 @@ class CellDataset(utils.Dataset):
         dataset_dir: Root directory of the dataset "../train/"
         subset: Subset to load. 
         '''
-        dataset_dir = os.join(dataset_dir, subset)
+        dataset_dir = os.path.join(dataset_dir, subset)
 
         image_paths = next(os.walk(dataset_dir))[2] # Get all filenames from the train directory
 
-        train_dir = os.join(dataset_dir, 'train.csv')
+        train_dir = os.path.join(dataset_dir, 'train.csv')
 
         cell_names, id2cell_label = cell_types(train_dir)
 
