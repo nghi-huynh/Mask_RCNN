@@ -247,7 +247,7 @@ class CellDataset(utils.Dataset):
             )
 
   
-    def load_mask(self, image_id):
+    def load_mask(self, image_id, dataset_dir):
         '''Generate instance mask for an image.
         Returns:
         masks: A bool array of shape [height, width, instance count] with
@@ -259,7 +259,7 @@ class CellDataset(utils.Dataset):
         image_id = info['id']
 
         # Get masks by image_id
-        masks = rle_decode(image_id)
+        masks = rle_decode(image_id, dataset_dir)
         masks = padding_image(masks, 0)
 
         # Get label
@@ -338,7 +338,9 @@ def padding_image(image, constant_values):
         else:
             return np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), constant_values=constant_values)
 
-def rle_decode(image_id):
+def rle_decode(image_id, dataset_dir):
+        train = pd.read_csv(dataset_dir)
+
         rows = train.loc[train['id'] == image_id]
 
         # Image Shape
