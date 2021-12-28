@@ -107,7 +107,7 @@ def cell_types(train_dir):
 
 
 def get_file_path(image_id):
-    return f'/kaggle/input/sartorius-cell-instance-segmentation/train/{image_id}.png'
+    return f'/content/cell/train/{image_id}.png'
 
 
 #train['file_path'] = train['id'].apply(get_file_path)
@@ -224,9 +224,9 @@ class CellDataset(utils.Dataset):
         dataset_dir: Root directory of the dataset "../train/"
         subset: Subset to load. 
         '''
-        dataset_dir = os.path.join(dataset_dir, subset)
+        dataset_train_dir = os.path.join(dataset_dir, subset)
 
-        image_paths = next(os.walk(dataset_dir))[2] # Get all filenames from the train directory
+        image_paths = next(os.walk(dataset_train_dir))[2] # Get all filenames from the train directory
 
         train_dir = os.path.join(dataset_dir, 'train.csv')
 
@@ -240,7 +240,7 @@ class CellDataset(utils.Dataset):
             self.add_image(
             "cell",
             image_id= image.split(".")[0], # we only want to have the file name as an image_id without the extension ".png"
-            path = os.path.join(dataset_dir,image),
+            path = os.path.join(dataset_train_dir,image),
             width = WIDTH,
             height = HEIGHT,
             label = id2cell_label[image.split(".")[0]]
