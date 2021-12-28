@@ -233,7 +233,7 @@ class CellDataset(utils.Dataset):
         cell_names, id2cell_label = cell_types(train_dir)
 
         # Add classes. We have multiple classes
-        for i, name in cell_names:
+        for i, name in enumerate(cell_names):
             self.add_class("cell", 1 + i, name)
 
         for image in image_paths:
