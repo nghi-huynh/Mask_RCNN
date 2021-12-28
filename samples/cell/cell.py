@@ -26,13 +26,13 @@ if __name__ == 'main':
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
 import os
-from samples.nucleus.nucleus import mask_to_rle
-from samples.balloon.balloon import COCO_WEIGHTS_PATH, DEFAULT_LOGS_DIR, ROOT_DIR
+#from samples.nucleus.nucleus import mask_to_rle
+#from samples.balloon.balloon import COCO_WEIGHTS_PATH, DEFAULT_LOGS_DIR, ROOT_DIR
 import sys
-import json
+#import json
 import datetime
 import numpy as np
-import skimage.io
+#import skimage.io
 from imgaug import augmenters as iaa
 import pandas as pd
 
@@ -328,6 +328,10 @@ def rle_decode(image_id):
         mask = mask.reshape([len(rows), *SHAPE])
         mask = np.moveaxis(mask, 0, 2)
         return mask
+
+def mask_to_rle(source_id, mask, score):
+    re = [source_id, score, mask]
+    return re
 
 #######################################################################
 # Detection
