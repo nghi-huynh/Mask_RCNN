@@ -26,6 +26,8 @@ if __name__ == 'main':
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
 import os
+from samples.nucleus.nucleus import VAL_IMAGE_IDS
+#from samples.nucleus.nucleus import VAL_IMAGE_IDS
 #from samples.nucleus.nucleus import mask_to_rle
 #from samples.balloon.balloon import COCO_WEIGHTS_PATH, DEFAULT_LOGS_DIR, ROOT_DIR
 import sys
@@ -82,6 +84,19 @@ DEBUG = False
 DEBUG_SIZE = 50
 
 EPOCHS_ALL = 10 if DEBUG else 20
+
+VAL_IMAGE_IDS = [
+    "0030fd0e6378.png",
+    "0140b3c8f445.png",
+    "01ae5a43a2ab.png",
+    "026b3c2c4b32.png",
+    "029e5b3b89c7.png",
+    "0323e81d23d9.png",
+    "03b27b381a5f.png",
+    "042c17cd9143.png",
+    "042dc0e561a4.png",
+    "04928f0866b0.png"
+]
 
 #############################################################
 # One hot encoding
@@ -213,19 +228,30 @@ class CellDataset(utils.Dataset):
         dataset_dir: Root directory of the dataset "../train/"
         subset: Subset to load. 
         '''
-        dataset_train_dir = os.path.join(dataset_dir, subset)
 
-        image_paths = next(os.walk(dataset_train_dir))[2] # Get all filenames from the train directory
+        assert subset in ["train", "val", "test"]
+        subset_dir = "train" if subset in ["train", "val"] else subset
+        dataset_train_dir = os.path.join(dataset_dir, subset_dir)
+
+       # image_paths = next(os.walk(dataset_train_dir))[2] # Get all filenames from the train directory
 
         train_dir = os.path.join(dataset_dir, 'train.csv')
 
         cell_names, id2cell_label = cell_types(train_dir)
 
+        if subset == "val":
+            image_ids = VAL_IMAGE_IDS
+        else:
+            # Get image ids from directory names
+            image_ids = next(os.walk(dataset_train_dir))[2] # Get all filenames from the train directory
+            if subset == "train":
+                image_ids = list(set(image_ids) - set(VAL_IMAGE_IDS))
+
         # Add classes. We have multiple classes
         for i, name in enumerate(cell_names):
             self.add_class("cell", 1 + i, name)
 
-        for image in image_paths:
+        for image in image_ids:
             self.add_image(
             "cell",
             image_id= image.split(".")[0], # we only want to have the file name as an image_id without the extension ".png"
