@@ -58,7 +58,7 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 RESULTS_DIR = os.path.join(ROOT_DIR, "results/cells/")
 
-DATASET_DIR = os.path.join(ROOT_DIR, "/cell/train.csv")
+DATASET_DIR = os.path.join(ROOT_DIR, "content/cell/train.csv")
 # Directory of train.csv file
 #TRAIN = os.path.join(ROOT_DIR, 'train.csv')
 #train = pd.read_csv(TRAIN)
