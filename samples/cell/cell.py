@@ -26,10 +26,6 @@ if __name__ == 'main':
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
 import os
-from samples.nucleus.nucleus import VAL_IMAGE_IDS
-#from samples.nucleus.nucleus import VAL_IMAGE_IDS
-#from samples.nucleus.nucleus import mask_to_rle
-#from samples.balloon.balloon import COCO_WEIGHTS_PATH, DEFAULT_LOGS_DIR, ROOT_DIR
 import sys
 #import json
 import datetime
