@@ -37,7 +37,7 @@ from imgaug import augmenters as iaa
 import pandas as pd
 
 # Root directory of the project
-ROOT_DIR = os.path.abspath("../../")
+ROOT_DIR = os.getcwd()
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR) # To find local version of the library
@@ -58,7 +58,7 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 RESULTS_DIR = os.path.join(ROOT_DIR, "results/cells/")
 
-DATASET_DIR = "/content/cell/train.csv"
+DATASET_DIR = os.path.join(ROOT_DIR, "/cell/train.csv")
 # Directory of train.csv file
 #TRAIN = os.path.join(ROOT_DIR, 'train.csv')
 #train = pd.read_csv(TRAIN)
@@ -93,7 +93,11 @@ The encoder derives the categories based on the unique values in each feature
 def cell_types(train_dir):
     train = pd.read_csv(train_dir)
     train['file_path'] = train['id'].apply(get_file_path)
+
+    # Unique cell names
     cell_names = np.sort(train['cell_type'].unique())
+
+    # Cell type to label dictionary
     cell_name_dict = dict([(v,k) for k, v in enumerate(cell_names)])
     
     # Add cell type label to train " + 1" because label 0 is reserved for background
@@ -108,24 +112,8 @@ def cell_types(train_dir):
 
 
 def get_file_path(image_id):
-    return f'/content/cell/train/{image_id}.png'
+    return f'{ROOT_DIR}/cell/train/{image_id}.png'
 
-
-#train['file_path'] = train['id'].apply(get_file_path)
-
-# Unique cell names
-#CELL_NAMES = np.sort(train['cell_type'].unique())
-
-# Cell type to label dictionary
-#CELL_NAMES_DICT = dict([(v,k) for k, v in enumerate(CELL_NAMES)])
-
-# Add cell type label to train " + 1" because label 0 is reserved for background
-#train['cell_type_label'] = train['cell_type'].apply(CELL_NAMES_DICT.get) + 1
-
-# Image ID to Cell Type Label Dictionary
-#ID2CELL_LABEL = dict(
-#    [(k, v) for k, v in train[['id', 'cell_type_label']].itertuples(name=None, index=False)]
-#)
 
 ##############################################################
 # Configurations
