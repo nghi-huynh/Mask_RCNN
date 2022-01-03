@@ -193,6 +193,8 @@ class CellConfig(Config):
     # the RPN NMS threshold.
     TRAIN_ROIS_PER_IMAGE = 128
 
+    STEPS_PER_EPOCH = 200
+
     # Maximum number of ground truth instances to use in one image
     MAX_GT_INSTANCES = 200
 
