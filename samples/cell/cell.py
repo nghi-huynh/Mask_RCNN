@@ -227,7 +227,7 @@ class CellDataset(utils.Dataset):
         subset: Subset to load. 
         '''
 
-        assert subset in ["train", "val", "test"]
+        assert subset in ["train", "val", "test", "val_set"]
         subset_dir = "train" if subset in ["train", "val"] else subset
         dataset_train_dir = os.path.join(dataset_dir, subset_dir)
 
